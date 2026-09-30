@@ -1,0 +1,72 @@
+{
+    "StartGame.Entry": {
+        "action": "DoNothing",
+        "timeout": 60000,
+        "next": [
+            "StartGame.ClickStart"
+        ]
+    },
+    "StartGame.ClickStart": {
+        "recognition": "OCR",
+        "expected": "点击开始",
+        "action": "Click",
+        "contact": 0,
+        "post_delay": 1000,
+        "timeout": 30000,
+        "next": [
+            "StartGame.CloseAnnouncement",
+            "StartGame.ClaimComebackReward"
+        ]
+    },
+    "StartGame.CloseAnnouncement": {
+        "recognition": "OCR",
+        "roi": [
+            604,
+            54,
+            82,
+            44
+        ],
+        "expected": "公告",
+        "action": "DoNothing",
+        "timeout": 5000,
+        "next": [
+            "[JumpBack]StartGame.ClickAnnouncementClose"
+        ]
+    },
+    "StartGame.ClickAnnouncementClose": {
+        "recognition": "TemplateMatch",
+        "template": "Announcement-Close.png",
+        "action": "Click",
+        "contact": 0,
+        "post_delay": 1000
+    },
+    "StartGame.ClaimComebackReward": {
+        "recognition": "TemplateMatch",
+        "roi": [
+            457,
+            601,
+            372,
+            71
+        ],
+        "template": "Comeback-Claim-All.png",
+        "action": "DoNothing",
+        "timeout": 20000,
+        "next": [
+            "ClaimReward.Confirm"
+        ]
+    },
+    "StartGame.CloseComebackPopup": {
+        "recognition": "TemplateMatch",
+        "roi": [
+            782,
+            34,
+            49,
+            46
+        ],
+        "template": "Comeback-Close.png",
+        "action": "Click",
+        "contact": 0,
+        "post_delay": 1000,
+        "timeout": 10000
+    }
+}

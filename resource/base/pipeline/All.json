@@ -1,0 +1,19 @@
+{
+    "ClaimReward.Confirm": {
+        "recognition": "OCR",
+        "roi": [
+            543,
+            428,
+            202,
+            67
+        ],
+        "expected": "点击领取奖励",
+        "action": "Click",
+        "contact": 0,
+        "post_delay": 1000,
+        "timeout": 10000,
+        "next": [
+            "StartGame.CloseComebackPopup"
+        ]
+    }
+}

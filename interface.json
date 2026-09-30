@@ -7,9 +7,13 @@
     "controller": [
         {
             "name": "Windows",
-            "label": "Windows app",
+            "label": "PC 客户端",
             "type": "Win32",
-            "display_short_side": 720
+            "display_short_side": 720,
+            "win32": {
+                "class_regex": "UnityWndClass",
+                "window_regex": "胜利女神"
+            }
         }
     ],
     "resource": [
@@ -21,7 +25,13 @@
             ]
         }
     ],
+    "pretask": {
+        "name": "StartGame",
+        "label": "启动游戏",
+        "description": "运行任务前启动《胜利女神：新的希望》。路径为本机安装位置，换机器时需修改 exec。",
+        "exec": "D:\\WeGameApps\\rail_apps\\胜利女神：新的希望(2002017)\\nikke.exe"
+    },
     "import": [
-        "./tasks/tutorial.json"
+        "./tasks/StartGame.json"
     ]
 }
