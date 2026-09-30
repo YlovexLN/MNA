@@ -59,15 +59,23 @@
 - **`tools/build-release.mjs`、`tools/sync-runtime.mjs` 与 `.github/workflows/release.yml`
   同属 CLI 模板文件**（`templates/addons/github/`，`build-release.mjs` 第 17 行的
   `{{projectSlug}}` 是渲染占位符）。对它们的修改**会在 `--update github` 时被模板重新渲染
-  覆盖**。目前有三处本地改动属于这种情况，被覆盖后需重做：
+  覆盖**。目前有四处本地改动属于这种情况，被覆盖后需重做：
     1. `guiEntrypointName()` 用 `releaseArtifactName` 而非 `projectSlug` 作为 Windows exe 名
        （产物可执行文件名为 `MNA.exe`，Unix 仍为 `mna`）。
     2. `releaseTargets` 内层数组的缩进修正（原模板缩进少一级，会让 `format:check` 报 `[warn]`，
        进而短路 `pnpm check` 让 CI 全红）。
     3. **产物名不带 GUI 后缀**：`GUI_TYPES[].suffix` 置空、artifact 正则改为在无后缀时省略
-       `-(...)` 段、`release.yml` 第 125 行的 archive 名去掉 `-${gui_upper}`。
-       这三处必须**同时**改，否则 `release.yml` 产出的名字会和 `build-release.mjs` 的校验对不上。
+       `-(...)` 段、`release.yml` 的 archive 名去掉 `-${gui_upper}`。
+       这几处必须**同时**改，否则 `release.yml` 产出的名字会和 `build-release.mjs` 的校验对不上。
        重新启用第二个 GUI 时要把后缀和 `-(...)` 段一起恢复。
+    4. **`release.yml` 的 `git_cliff` job 在「无稳定 tag」时必须回退而不是失败**。模板里是
+       `git describe --match 'v[0-9]*' --exclude '*-*'`，一旦失败就 `exit 1`，导致 release job 的
+       `needs: [package, git_cliff]` 永不满足、**整个 Release 都发不出来**。凡是「只有预发布
+       tag」或「首次发版」的项目都会踩到。已改为回退到全历史生成说明（`notes_range=""`）。
+
+    > ⚠️ 实证：跑一次 `create-maa-project --add <addon>` 或 `--update github` 会**重渲染全部
+    > managed 文件**并把上述改动**全部还原**。加任何 addon 之前先记下这些内容。
+
 - **`maa-project.json` 的两条硬约束**（违反会让 `--doctor` 直接 `ok: false`，且构建失败）：
     - `project.slug` **必须是小写** ASCII 字母/数字/连字符。写 `MNA` 会报
       `project.slug must use lowercase ASCII letters, numbers, and hyphens`。

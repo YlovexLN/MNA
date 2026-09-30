@@ -3,6 +3,9 @@
         "devTools": {
             "enabled": true
         },
+        "gitCliff": {
+            "enabled": true
+        },
         "github": {
             "enabled": true
         },
