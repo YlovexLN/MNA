@@ -5,7 +5,10 @@
             "label": "进入游戏",
             "entry": "StartGame.Entry",
             "default_check": true,
-            "description": "显示文本「点击开始」进入游戏。游戏需先由用户从 WeGame 启动，本任务只处理游戏内流程。"
+            "description": "显示文本「点击开始」进入游戏。游戏需先由用户从 WeGame 启动，本任务只处理游戏内流程。",
+            "option": [
+                "StartGameMenuKey"
+            ]
         }
     ]
 }

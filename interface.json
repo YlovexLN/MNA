@@ -33,6 +33,30 @@
         "./tasks/Outpost-Defense.json",
         "./tasks/Annihilate.json"
     ],
+    // 全局配置项：进入游戏后用来打开系统菜单的按键。
+    // PI v2 的 hotkey 选项负责「人类可读字符串 → 虚拟按键码」的翻译：
+    // 界面上用户看到的是 ESC 这类名字，pipeline_override 把它换成整数写进 StartGame.PressEsc.key。
+    // 注意：hotkey 类型只在 interface.schema.json 里有定义（tasks/*.json 用的 interface_import.schema.json 不支持），
+    // 所以这个配置项只能写在 interface.json。
+    "option": {
+        "StartGameMenuKey": {
+            "type": "hotkey",
+            "label": "系统菜单按键",
+            "description": "进入游戏后按该键打开系统菜单，用于确认已正常进入游戏界面。默认 ESC。",
+            "hotkeys": [
+                {
+                    "name": "menuKey",
+                    "label": "菜单键",
+                    "default": "ESC"
+                }
+            ],
+            "pipeline_override": {
+                "StartGame.PressEsc": {
+                    "key": "{menuKey}"
+                }
+            }
+        }
+    },
     "agent": [
         {
             "child_exec": "uv",
