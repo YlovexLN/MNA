@@ -30,28 +30,8 @@
     ],
     "import": [
         "./tasks/StartGame.json",
-        "./tasks/Outpost-Defense.json",
-        "./tasks/Annihilate.json"
+        "./tasks/Outpost-Defense.json"
     ],
-    "option": {
-        "StartGameMenuKey": {
-            "type": "hotkey",
-            "label": "系统菜单按键",
-            "description": "进入游戏后按该键打开系统菜单，用于确认已正常进入游戏界面。默认 ESC。",
-            "hotkeys": [
-                {
-                    "name": "menuKey",
-                    "label": "菜单键",
-                    "default": "ESC"
-                }
-            ],
-            "pipeline_override": {
-                "StartGame.PressEsc": {
-                    "key": "{menuKey}"
-                }
-            }
-        }
-    },
     "agent": [
         {
             "child_exec": "uv",

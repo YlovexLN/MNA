@@ -80,11 +80,8 @@
 
     // 进入游戏后的收尾：按 ESC 弹出系统菜单，以 ROI 内 OCR 出「通知」判定已正常进入游戏界面，
     // 再点击「确认」。后续任务从这里接管。
-    // 这里的 27 是 VK_ESCAPE（虚拟按键码，ClickKey 只接受整数），作为兜底值；
-    // 用户想换键可以用 interface.json 里的「系统菜单按键」配置项（那边写的是 ESC 这类可读名字，
-    // 由 PI 的 hotkey 机制翻译成整数）。该配置项只能放 interface.json：hotkey 类型只在
-    // interface.schema.json 中定义（tasks 目录用的 interface_import.schema.json 不支持），
-    // 而且 interface.json 会被 tools/build-release.mjs 用 JSON.parse 读取，里面不能写注释。
+    // 27 = VK_ESCAPE（虚拟按键码，ClickKey 只接受整数）。这里刻意写死、不做成可配置项：
+    // 这个按键是判断「是否已成功进入游戏」的关键，改错键会让后续流程失去依据。
     "StartGame.PressEsc": {
         "action": "ClickKey",
         "key": 27,

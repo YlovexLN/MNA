@@ -4,9 +4,10 @@
             "name": "OutpostDefense",
             "label": "前哨防御",
             "entry": "OutpostDefense.Entry",
-            "description": "读取「前哨防御」界面上的百分比数字，超过设定阈值（默认 50%）后点击该数字区域。后续的「一举歼灭」是独立任务。",
+            "description": "读取「前哨防御」界面上的百分比数字，超过阈值后点击数字区域；随后处理「一举歼灭」（只有从这里进入才会出现该按钮）：有红点才点它，未启用则改为点击「获取奖励」→ 点掉确认框 → 关窗。",
             "option": [
-                "OutpostDefenseThreshold"
+                "OutpostDefenseThreshold",
+                "AnnihilateEnabled"
             ]
         }
     ],
@@ -34,6 +35,29 @@
                     }
                 }
             }
+        },
+        "AnnihilateEnabled": {
+            "type": "switch",
+            "label": "启用一举歼灭",
+            "description": "启用：有红点则点击「一举歼灭」。不启用：不点「一举歼灭」。",
+            "cases": [
+                {
+                    "name": "Yes",
+                    "label": "启用"
+                },
+                {
+                    "name": "No",
+                    "label": "不启用",
+                    "pipeline_override": {
+                        "Annihilate.Entry": {
+                            "next": [
+                                "Annihilate.ClaimReward"
+                            ]
+                        }
+                    }
+                }
+            ],
+            "default_case": "Yes"
         }
     }
 }
