@@ -31,7 +31,26 @@
   `resource/`、`tasks/`、`interface.json` 等，都是项目资产，必须保留。
 - 写临时脚本时优先直接写进仓库内的临时路径并在结束时删除，**不要**为图省事写到仓库外。
 
-## 三、本项目内不要做的事
+## 三、文件命名规范
+
+**适用范围仅限这三个目录：**
+
+- `resource/base/image/`
+- `resource/base/pipeline/`
+- `tasks/`
+
+这三个目录内的文件一律使用**连字符 + 每个词首字母大写**：
+
+- `Start-Game.json`、`Comeback-Claim-All.png`、`Announcement-Close.png`
+- 单词之间用 `-` 连接，**不用空格、不用下划线**
+- 除专有名词外不用全大写缩写
+
+**其余文件一概不管**，不要因为本条去改动这三个目录之外的任何文件名。
+
+同一资产在 pipeline 中的节点名沿用 **PascalCase**（如 `StartGame.ClickStart`、
+`ClaimReward.Confirm`），这是 MaaFW 社区惯例，与文件名规则并存。
+
+## 四、本项目内不要做的事
 
 - **不要修** `tools/build-release.mjs` 的格式问题。它不符合本项目 Prettier 配置，
   `pnpm format:check` 会报 `[warn]`，导致 CI 的 `check.yml` 失败。
@@ -44,7 +63,7 @@
   `resource/base/model/ocr/`。它们都在 `.gitignore` 里，属派生物。
 - **不要改** `.gitignore` 里 `# BEGIN/END create-maa-project` 标记之间的内容，那由 CLI 管理。
 
-## 四、CLI 的使用纪律
+## 五、CLI 的使用纪律
 
 `create-maa-project` 是本项目的生成与维护工具（全局安装，3.6.0）。
 
@@ -63,7 +82,7 @@
 - `<path>` 是**路径**，`--slug` 才是项目标识。想生成到当前目录就用 `.`。
   （此前用 `create-maa-project MNA` 误建了子目录 `MNA\`，属错误用法。）
 
-## 五、本机环境约束（会让你困惑的部分）
+## 六、本机环境约束（会让你困惑的部分）
 
 - **沙箱会杀死 shell**：默认 `workspace-write` 模式下任何进程都无法创建，`pwsh` 连
   `echo test` 都返回 `0xC0000142`（DLL 初始化失败）。这不是命令写错，是沙箱边界。
@@ -79,7 +98,7 @@
   `CMP_UPDATE_FAILED`（Node `fetch` 失败）。但 PowerShell 拉同一 URL 返回 200，
   即**网络可达、问题在 Node fetch 链路**。不要把这类失败当成配置错误去改 `maa-project.json`。
 
-## 六、改动的验证要求
+## 七、改动的验证要求
 
 不要只跑 `--version` 就宣称完成。按改动性质选择验证：
 
@@ -87,7 +106,7 @@
   确认产物名符合预期，例如 `MNA-win-x86_64-v0.1.0-MXU.zip`。
 - 改项目配置 → `create-maa-project --doctor --report`，检查 `doctor.checks` 每项。
 - 改 pipeline / interface → `pnpm check`（`format:check` + `check:schema` + `check:maa`）。
-  注意其中 `format:check` 会因第三节那个已知问题失败，属预期。
+  注意其中 `format:check` 会因第四节那个已知问题失败，属预期。
 - 改完用 `git status --porcelain` 确认变更范围与预期一致，别带出意外文件。
 
 报告结论时区分「已验证」和「未验证」，不要把推测写成事实。
