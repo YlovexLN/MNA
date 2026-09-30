@@ -13,8 +13,10 @@
         "contact": 0,
         "post_delay": 1000,
         "timeout": 30000,
+        // 公告弹窗要先关掉再继续：关它的整条子链跑完后，[JumpBack] 会回到本节点接着识别下一个候选，
+        // 所以「按 ESC」只有在公告不存在时才会被尝试。
         "next": [
-            "StartGame.CloseAnnouncement",
+            "[JumpBack]StartGame.CloseAnnouncement",
             "StartGame.ClaimComebackReward",
             "StartGame.PressEsc"
         ]
@@ -30,8 +32,9 @@
         "expected": "公告",
         "action": "DoNothing",
         "timeout": 5000,
+        // 这里不再挂 [JumpBack]：子链跑完就结束，由 ClickStart 那边的 [JumpBack] 负责回到主流程。
         "next": [
-            "[JumpBack]StartGame.ClickAnnouncementClose"
+            "StartGame.ClickAnnouncementClose"
         ]
     },
     "StartGame.ClickAnnouncementClose": {
@@ -40,6 +43,7 @@
         "action": "Click",
         "contact": 0,
         "post_delay": 1000
+        // next 为空：关掉公告这条子链到此结束，回到 ClickStart 继续（见那边的 [JumpBack]）。
     },
     "StartGame.ClaimComebackReward": {
         "recognition": "TemplateMatch",
@@ -76,6 +80,8 @@
 
     // 进入游戏后的收尾：按 ESC 弹出系统菜单，以 ROI 内 OCR 出「通知」判定已正常进入游戏界面，
     // 再点击「确认」。后续任务从这里接管。
+    // 这里的 27 是 VK_ESCAPE（虚拟按键码，ClickKey 只接受整数），作为兜底值；
+    // 用户想换键可以用 interface.json 里的「系统菜单按键」配置项（那边写的是 ESC 这类可读名字）。
     "StartGame.PressEsc": {
         "action": "ClickKey",
         "key": 27,
