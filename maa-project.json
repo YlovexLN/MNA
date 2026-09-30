@@ -54,19 +54,9 @@
     },
     "project": {
         "displayName": "MNA",
-        "initialTemplate": "agent",
-        "slug": "MNA",
-        "version": ""
-    },
-    "python": {
-        "devCommand": [
-            "uv",
-            "run",
-            "python",
-            "agent/main.py"
-        ],
-        "recommendedPython": "3.13",
-        "requiresPython": ">=3.13,<3.14"
+        "initialTemplate": "pipeline",
+        "slug": "mna",
+        "version": "0.0.1"
     },
     "resources": [
         {

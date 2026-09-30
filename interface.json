@@ -18,8 +18,8 @@
     ],
     "resource": [
         {
-            "name": "base",
-            "label": "通用资源",
+            "name": "通用资源",
+            "label": "base",
             "path": [
                 "./resource/base"
             ]
@@ -27,15 +27,5 @@
     ],
     "import": [
         "./tasks/StartGame.json"
-    ],
-    "agent": [
-        {
-            "child_exec": "uv",
-            "child_args": [
-                "run",
-                "python",
-                "agent/main.py"
-            ]
-        }
     ]
 }
