@@ -52,9 +52,9 @@
 
 ## 四、本项目内不要做的事
 
-- **不要修** `tools/build-release.mjs` 的格式问题。它不符合本项目 Prettier 配置，
-  `pnpm format:check` 会报 `[warn]`，导致 CI 的 `check.yml` 失败。
-  用户已明确决定**保留不修**。不要"顺手"跑 `pnpm format`，也不要改 `.prettierrc.mjs` 去迁就它。
+- `tools/build-release.mjs` 的 Prettier 格式问题**已修复**（`releaseTargets` 内层数组缩进
+  少一级，曾使 `pnpm format:check` 报 `[warn]` 并让 CI 全红）。该文件由 CLI 生成但**不是**
+  managed 文件，改动不会被 `--update` 覆盖。不要再改 `.prettierrc.mjs` 去迁就任何文件。
 - **不要手改** `.github/workflows/release.yml` 来选择 UI。该文件是 CLI 生成的 managed 文件
   （`templates/addons/github/.github/workflows/release.yml` 渲染而来），手改会在下次
   `--update` 时被覆盖。UI 选择由 `maa-project.json` 的 `runtime.mfa` / `runtime.mxu` 决定，
@@ -106,7 +106,8 @@
   确认产物名符合预期，例如 `MNA-win-x86_64-v0.1.0-MXU.zip`。
 - 改项目配置 → `create-maa-project --doctor --report`，检查 `doctor.checks` 每项。
 - 改 pipeline / interface → `pnpm check`（`format:check` + `check:schema` + `check:maa`）。
-  注意其中 `format:check` 会因第四节那个已知问题失败，属预期。
+  三步都应通过；`format:check` 若报 `[warn]`，跑 `pnpm format` 修掉，不要放着不管——
+  它是 `&&` 链的第一步，挂了会让后两步**根本不执行**。
 - 改完用 `git status --porcelain` 确认变更范围与预期一致，别带出意外文件。
 
 报告结论时区分「已验证」和「未验证」，不要把推测写成事实。
