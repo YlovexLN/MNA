@@ -32,6 +32,53 @@
                 }
             },
             "additionalProperties": true
+        },
+        "NumberThresholdParam": {
+            "type": "object",
+            "description": "Reads a number from a reused OCR node and hits when the comparison against threshold is true.",
+            "properties": {
+                "ocr_node": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Existing OCR node to run through context.run_recognition(); its roi/only_rec/expected apply."
+                },
+                "threshold": {
+                    "type": [
+                        "number",
+                        "string"
+                    ],
+                    "description": "Value to compare with the number read from ocr_node. Numeric strings are accepted too."
+                },
+                "comparison": {
+                    "type": "string",
+                    "enum": [
+                        ">",
+                        ">=",
+                        "<",
+                        "<=",
+                        "==",
+                        "!="
+                    ],
+                    "default": ">",
+                    "description": "Comparison operator applied as `value <comparison> threshold`."
+                },
+                "pattern": {
+                    "type": "string",
+                    "minLength": 1,
+                    "default": "\\d+(?:\\.\\d+)?",
+                    "description": "Regex used to extract numbers from the OCR text. Matches that are not numbers are ignored."
+                },
+                "index": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "Which extracted number to test. Negative values are resolved Python-style."
+                }
+            },
+            "required": [
+                "ocr_node",
+                "threshold"
+            ],
+            "additionalProperties": false
         }
     },
     "type": "object",
@@ -60,6 +107,25 @@
                 "properties": {
                     "custom_recognition_param": {
                         "$ref": "#/$defs/ExampleRecognitionParam"
+                    }
+                }
+            }
+        },
+        {
+            "if": {
+                "properties": {
+                    "custom_recognition": {
+                        "const": "NumberThreshold"
+                    }
+                },
+                "required": [
+                    "custom_recognition"
+                ]
+            },
+            "then": {
+                "properties": {
+                    "custom_recognition_param": {
+                        "$ref": "#/$defs/NumberThresholdParam"
                     }
                 }
             }

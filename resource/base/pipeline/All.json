@@ -1,11 +1,14 @@
 {
+    // 「点击领取奖励」确认框。roi 故意取两个场景的并集：
+    // 回归签到里在 [543,428,202,67]，前哨防御领取后在 [552,494,180,88]，两者纵向相邻。
+    // 复用方只取本节点的识别（roi + expected），动作与后续由调用方自己定义（见 Annihilate.ConfirmClaimReward）。
     "ClaimReward.Confirm": {
         "recognition": "OCR",
         "roi": [
             543,
             428,
             202,
-            67
+            154
         ],
         "expected": "点击领取奖励",
         "action": "Click",

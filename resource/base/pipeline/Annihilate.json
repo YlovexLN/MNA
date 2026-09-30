@@ -1,0 +1,141 @@
+{
+    // 「一举歼灭」：按钮范围内出现红色角标（有新内容）时才点击；没有红点就不点，本任务正常结束，
+    // 队列继续跑下一个任务。
+    // 模板：Annihilate.png = 没红点的按钮。红点不用模板比对，直接在按钮范围内按颜色（HSV）找红色。
+    // 按钮范围 [464, 579, 179, 66] 基于 1280×720。下面三个节点的 roi 是同一块区域（改了要三处一起改），
+    // 必须把红色角标整个圈进去，否则「有红点」判断会漏。
+
+    // 任务入口：先等按钮出现在画面上再决策，避免按钮还没渲染出来就被判成「没红点」。
+    // next 有顺序：先看「有红点」（命中就点击），再看「没红点」（命中就什么都不做，任务结束）。
+    "Annihilate.Entry": {
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "timeout": 30000,
+        "next": [
+            "Annihilate.ClickWhenDotShown",
+            "Annihilate.SkipWhenNoDot"
+        ]
+    },
+
+    // 有红点：按钮范围内既命中「红色角标」又命中「按钮模板」才成立，然后点击按钮本体。
+    // 红点用 ColorMatch（HSV）：实测角标色约 HSV(4, 208, 252)，与按钮的蓝白配色完全分开；
+    // count 15 是给角标（约 37 个红像素）留的余量，roi 略微裁到角标边也能命中。
+    // box_index 1 = 输出按钮模板的识别框，所以 target: true 点的是按钮中心。
+    "Annihilate.ClickWhenDotShown": {
+        "recognition": "And",
+        "all_of": [
+            {
+                "recognition": "ColorMatch",
+                "roi": [
+                    464,
+                    579,
+                    179,
+                    66
+                ],
+                "method": 40,
+                "lower": [
+                    0,
+                    130,
+                    150
+                ],
+                "upper": [
+                    20,
+                    255,
+                    255
+                ],
+                "connected": true,
+                "count": 15
+            },
+            {
+                "recognition": "TemplateMatch",
+                "roi": [
+                    464,
+                    579,
+                    179,
+                    66
+                ],
+                "template": "Annihilate.png"
+            }
+        ],
+        "box_index": 1,
+        "pre_delay": 0,
+        "action": "Click",
+        "target": true,
+        "post_delay": 0
+    },
+
+    // 没有红点：按钮在范围内（模板命中）但没有红色角标（红点没命中才会轮到本节点）→ 不点击，任务正常结束。
+    // 注意：这里只判「按钮在不在」，红点判断交给上面那个节点在每轮里先做。
+    "Annihilate.SkipWhenNoDot": {
+        "recognition": "TemplateMatch",
+        "roi": [
+            464,
+            579,
+            179,
+            66
+        ],
+        "template": "Annihilate.png",
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0
+    },
+
+    // 「不启用一举歼灭」时走这条（tasks/Annihilate.json 的开关把入口 next 指过来）：
+    // 同一排右侧是「获取奖励」文本，OCR 命中即点击该文本框（= 点击领取），
+    // 领取后会再弹「点击领取奖励」确认框，交给下一步处理。
+    "Annihilate.ClaimReward": {
+        "recognition": "OCR",
+        "roi": [
+            635,
+            578,
+            180,
+            66
+        ],
+        "expected": "获取奖励",
+        "pre_delay": 0,
+        "action": "Click",
+        "target": true,
+        "post_delay": 0,
+        "next": [
+            "Annihilate.ConfirmClaimReward"
+        ]
+    },
+
+    // 确认框：复用 All.json 里 ClaimReward.Confirm 的识别（roi + expected = 点击领取奖励），
+    // 但动作与 next 由本节点自己定义 —— 所以不会跟着那个节点的 next 跳到 StartGame 的关闭弹窗流程，
+    // 点完这里按本任务的流水线继续去关窗。
+    // And 里只放一个引用子识别，box_index 0 = 用该识别的框，因此 target: true 点的是识别到的文字框。
+    "Annihilate.ConfirmClaimReward": {
+        "recognition": "And",
+        "all_of": [
+            "ClaimReward.Confirm"
+        ],
+        "box_index": 0,
+        "pre_delay": 0,
+        "action": "Click",
+        "target": true,
+        "post_delay": 0,
+        "next": [
+            "Annihilate.CloseWindow"
+        ]
+    },
+
+    // 收尾：识别到窗口的关闭图（resource/base/image/Announcement-Close.png）就点它关窗，任务到此结束。
+    // next 为空 = 任务结束。模板只有 20×20，全屏找图；若真机不稳就加 roi 或调 threshold。
+    // 「一举歼灭」那条分支目前点完就结束，没接关窗；需要的话把 ClickWhenDotShown 的 next 也指过来。
+    "Annihilate.CloseWindow": {
+        "recognition": "TemplateMatch",
+        "roi": [
+            762,
+            48,
+            73,
+            81
+        ],
+        "template": "Announcement-Close.png",
+        "pre_delay": 0,
+        "action": "Click",
+        "target": true,
+        "post_delay": 0
+    }
+}

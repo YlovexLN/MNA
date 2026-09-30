@@ -1,8 +1,8 @@
 {
     "interface_version": 2,
-    "name": "MNA",
+    "name": "mna",
     "label": "MNA",
-    "version": "",
+    "version": "v0.0.1",
     "description": "MNA 小助手",
     "controller": [
         {
@@ -18,15 +18,17 @@
     ],
     "resource": [
         {
-            "name": "通用资源",
-            "label": "base",
+            "name": "base",
+            "label": "通用资源",
             "path": [
                 "./resource/base"
             ]
         }
     ],
     "import": [
-        "./tasks/StartGame.json"
+        "./tasks/StartGame.json",
+        "./tasks/Outpost-Defense.json",
+        "./tasks/Annihilate.json"
     ],
     "agent": [
         {

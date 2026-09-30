@@ -1,0 +1,41 @@
+{
+    "task": [
+        {
+            "name": "OutpostDefense",
+            "label": "前哨防御",
+            "entry": "OutpostDefense.Entry",
+            "description": "读取「前哨防御」界面上的百分比数字，超过设定阈值（默认 50%）后点击该数字区域。后续的「一举歼灭」是独立任务。",
+            "option": [
+                "OutpostDefenseThreshold"
+            ]
+        }
+    ],
+    // 阈值配置项：用户填写的整数覆盖 pipeline 中 OutpostDefense.ClickOnThreshold 的 threshold。
+    // 不填则沿用 default（50），也就是「超过 50% 才点击」。
+    "option": {
+        "OutpostDefenseThreshold": {
+            "type": "input",
+            "label": "前哨防御触发阈值",
+            "description": "识别到的百分比 **大于** 该数值时才点击。默认 50。",
+            "inputs": [
+                {
+                    "name": "thresholdPercent",
+                    "label": "阈值(%)",
+                    "default": "50",
+                    "pipeline_type": "int",
+                    "verify": "^(?:[1-9]?\\d|100)$",
+                    "pattern_msg": "请填写 0-100 之间的整数"
+                }
+            ],
+            "pipeline_override": {
+                "OutpostDefense.ClickOnThreshold": {
+                    "custom_recognition_param": {
+                        "ocr_node": "OutpostDefense.ReadPercent",
+                        "threshold": "{thresholdPercent}",
+                        "comparison": ">"
+                    }
+                }
+            }
+        }
+    }
+}

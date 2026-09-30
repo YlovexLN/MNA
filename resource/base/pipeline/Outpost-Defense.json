@@ -1,0 +1,52 @@
+{
+    // 「前哨防御」：读取界面上的百分比数字，数值超过阈值（默认 50%）后点击该数字区域。
+    // 阈值由 tasks/Outpost-Defense.json 的 option 覆盖 ClickOnThreshold 的
+    // custom_recognition_param.threshold；这里写的 50 是用户没填时的默认值。
+    // 点击之后的「一举歼灭」是独立任务，见 tasks/Annihilate.json。
+
+    // 任务入口。timeout -1 表示一直等到数值超过阈值为止（识别不到就一直重试）；
+    // 若希望等不到就结束，可改成具体毫秒数，例如 600000（10 分钟）。
+    "OutpostDefense.Entry": {
+        "pre_delay": 0,
+        "action": "DoNothing",
+        "post_delay": 0,
+        "timeout": -1,
+        "next": [
+            "OutpostDefense.ClickOnThreshold"
+        ]
+    },
+
+    // 内部节点：只负责把百分比文字读出来，由 NumberThreshold 通过 run_recognition 复用，
+    // 不在任何 next 里出现，不参与流程推进。
+    // roi 基于 1280×720。only_rec 跳过文本检测、直接识别整块 roi，适合 roi 恰好框住数字的情况；
+    // 若读数不稳定（roi 内混入其它文字/数字被截断），把 only_rec 去掉，并可用 expected 收窄要匹配的文本。
+    "OutpostDefense.ReadPercent": {
+        "recognition": "OCR",
+        "roi": [
+            304,
+            571,
+            119,
+            42
+        ],
+        "only_rec": true
+    },
+
+    // 阈值判定 + 点击。识别命中即代表「读到的数字 比较 threshold 为真」，此时点击识别到的位置
+    // （target: true = 刚识别到的百分比数字本身），随后交给 next 里的后续步骤。
+    "OutpostDefense.ClickOnThreshold": {
+        "recognition": "Custom",
+        "custom_recognition": "NumberThreshold",
+        "custom_recognition_param": {
+            "ocr_node": "OutpostDefense.ReadPercent",
+            "threshold": 50,
+            "comparison": ">"
+        },
+        "pre_delay": 0,
+        "action": "Click",
+        "target": true,
+        "post_delay": 0
+
+        // 点击后的后续步骤：「一举歼灭」已经拆成独立任务（tasks/Annihilate.json），
+        // 由任务队列在本任务之后执行，所以这里不再串接节点。
+    }
+}
