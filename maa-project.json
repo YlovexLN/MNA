@@ -1,0 +1,74 @@
+{
+    "addons": {
+        "devTools": {
+            "enabled": true
+        },
+        "github": {
+            "enabled": true
+        },
+        "vscode": {
+            "enabled": true
+        }
+    },
+    "controller": {
+        "kinds": [
+            "Win32"
+        ]
+    },
+    "features": {
+        "ci": {
+            "enabled": true
+        },
+        "quality": {
+            "enabled": true
+        },
+        "release": {
+            "enabled": true
+        },
+        "vscode": {
+            "enabled": true
+        }
+    },
+    "license": {
+        "spdx": "MIT"
+    },
+    "maafw": {
+        "channel": "stable",
+        "version": ""
+    },
+    "network": {
+        "mode": "auto"
+    },
+    "ocr": {
+        "files": {
+            "README.md": "ppocr_v6/small/README.md",
+            "det.onnx": "ppocr_v6/small/det.onnx",
+            "keys.txt": "ppocr_v6/small/keys.txt",
+            "rec.onnx": "ppocr_v6/small/rec.onnx"
+        },
+        "source": "submodule",
+        "submodulePath": "MaaCommonAssets/OCR"
+    },
+    "project": {
+        "displayName": "MNA",
+        "initialTemplate": "pipeline",
+        "slug": "mna",
+        "version": "0.1.0"
+    },
+    "resources": [
+        {
+            "enabled": true,
+            "label": "Base",
+            "path": "resource/base",
+            "slug": "base"
+        }
+    ],
+    "runtime": {
+        "mfa": {
+            "channel": "stable",
+            "enabled": true,
+            "version": ""
+        }
+    },
+    "schemaVersion": 2
+}
