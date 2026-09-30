@@ -52,13 +52,26 @@
 
 ## 四、本项目内不要做的事
 
-- `tools/build-release.mjs` 的 Prettier 格式问题**已修复**（`releaseTargets` 内层数组缩进
-  少一级，曾使 `pnpm format:check` 报 `[warn]` 并让 CI 全红）。该文件由 CLI 生成但**不是**
-  managed 文件，改动不会被 `--update` 覆盖。不要再改 `.prettierrc.mjs` 去迁就任何文件。
 - **不要手改** `.github/workflows/release.yml` 来选择 UI。该文件是 CLI 生成的 managed 文件
   （`templates/addons/github/.github/workflows/release.yml` 渲染而来），手改会在下次
   `--update` 时被覆盖。UI 选择由 `maa-project.json` 的 `runtime.mfa` / `runtime.mxu` 决定，
   由 `tools/build-release.mjs` 在运行时读取。
+- **`tools/build-release.mjs` 与 `tools/sync-runtime.mjs` 同属 CLI 模板文件**
+  （`templates/addons/github/tools/`，`build-release.mjs` 第 17 行的 `{{projectSlug}}` 是
+  渲染占位符）。对它们的修改**会在 `--update github` 时被模板重新渲染覆盖**。目前有两处
+  本地改动属于这种情况，被覆盖后需重做：
+    1. `guiEntrypointName()` 用 `releaseArtifactName` 而非 `projectSlug` 作为 Windows exe 名
+       （`.exe` 产物名为 `MNA.exe`）。
+    2. `releaseTargets` 内层数组的缩进修正（原模板缩进少一级，会让 `format:check` 报 `[warn]`）。
+       上游若修好这两点，本地改动即可撤销。
+- **`maa-project.json` 的两条硬约束**（违反会让 `--doctor` 直接 `ok: false`，且构建失败）：
+    - `project.slug` **必须是小写** ASCII 字母/数字/连字符。写 `MNA` 会报
+      `project.slug must use lowercase ASCII letters, numbers, and hyphens`。
+      大写只用于 `project.displayName` 与 `interface.json` 的 `label`（界面显示名）。
+    - `runtime.mfa` **必须是对象**，不能删除。删掉会报 `runtime.mfa must be an object`，
+      即使本项目不使用 MFAAvalonia（用 `enabled: false` 表达"不用"）。
+    - `interface.json` 的 `name` 必须**严格等于** `project.slug`（`build-release.mjs` 第 82 行
+      有断言），而 `version` 必须等于 release tag。
 - **不要提交** `dist/`、`node_modules/`、`.create-maa-project/`、`config/`、
   `resource/base/model/ocr/`。它们都在 `.gitignore` 里，属派生物。
 - **不要改** `.gitignore` 里 `# BEGIN/END create-maa-project` 标记之间的内容，那由 CLI 管理。

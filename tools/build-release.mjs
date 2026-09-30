@@ -648,7 +648,10 @@ function pythonRuntimePath(runtimePlatform) {
 }
 
 function guiEntrypointName(runtimePlatform) {
-    return runtimePlatform.startsWith("win-") ? `${projectSlug}.exe` : projectSlug;
+    // Windows ships the user-facing artifact name ("MNA.exe") so the executable reads the same
+    // as the release archive; the slug stays lower-case because the CLI requires it, and Unix
+    // entrypoints stay slug-named to match the CLI's own launch expectations.
+    return runtimePlatform.startsWith("win-") ? `${releaseArtifactName}.exe` : projectSlug;
 }
 
 function renameGuiEntrypoint(gui, root, runtimePlatform) {

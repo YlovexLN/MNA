@@ -25,6 +25,38 @@ const PYTHON_STANDALONE_TRIPLES = {
     "osx-x64": "x86_64-apple-darwin",
 };
 
+// MXU names its assets MXU-<os>-<arch>-<tag>.<ext>, e.g. MXU-linux-aarch64-v2.7.1.tar.gz.
+
+function mxuChannel() {
+    return project.runtime?.mxu?.channel === "beta" ? "beta" : "stable";
+}
+
+// Returns true only when the channel is reachable and provably lacks an asset for this
+// platform. Any network or payload problem returns false so the update is still attempted:
+// the CLI then reports the real reason instead of this script hiding it behind a warning.
+async function mxuAssetUnavailable(platform) {
+    if (!platform || platform === "all") return false;
+    const channel = mxuChannel();
+    try {
+        const releases = await fetchGithubJson("https://api.github.com/repos/MistEO/MXU/releases?per_page=30");
+        if (!Array.isArray(releases)) return false;
+        const os = platform.startsWith("win-") ? "win" : platform.startsWith("osx-") ? "macos" : "linux";
+        const arch = platform.endsWith("-arm64") ? "aarch64" : "x86_64";
+        const wanted = new RegExp(`^MXU-${os}-${arch}-v.+\\.(zip|tar\\.gz)$`);
+        const wantPrerelease = channel === "beta";
+        const sorted = releases
+            .filter((release) => isRecord(release) && Boolean(release.prerelease) === wantPrerelease)
+            .sort((a, b) => Date.parse(b.published_at ?? 0) - Date.parse(a.published_at ?? 0));
+        const target = sorted[0];
+        if (!target || !Array.isArray(target.assets)) return false;
+        return !target.assets.some(
+            (asset) => isRecord(asset) && typeof asset.name === "string" && wanted.test(asset.name),
+        );
+    } catch {
+        return false;
+    }
+}
+
 const project = JSON.parse(readFileSync("maa-project.json", "utf8"));
 
 const updateArgs = [
@@ -38,8 +70,14 @@ if (project.runtime?.mfa?.enabled !== false) {
     updateArgs.push("--update", "runtime:mfa");
 }
 if (project.runtime?.mxu?.enabled) {
-    if (requestedRuntimePlatform() === "linux-arm64") {
-        console.warn("[WARN] Skipping MXU runtime sync for linux-arm64 because no MXU runtime asset is available.");
+    // MXU only started publishing linux-aarch64 assets in v2.7.0; earlier releases shipped
+    // x86_64 only. Probe the channel instead of skipping the platform outright, otherwise a
+    // newer MXU makes this skip stale and the linux-arm64 package silently builds without a
+    // GUI runtime (build-release.mjs then warns and emits no dist/package-* at all).
+    if (await mxuAssetUnavailable(requestedRuntimePlatform())) {
+        console.warn(
+            `[WARN] Skipping MXU runtime sync for ${requestedRuntimePlatform()} because the MXU ${mxuChannel()} channel has no runtime asset for it.`,
+        );
     } else {
         updateArgs.push("--update", "runtime:mxu");
     }

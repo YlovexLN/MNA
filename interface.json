@@ -2,8 +2,8 @@
     "interface_version": 2,
     "name": "mna",
     "label": "MNA",
-    "version": "v0.1.0",
-    "description": "MNA MaaFW project",
+    "version": "v0.0.1-beta.1",
+    "description": "MNA 小助手",
     "controller": [
         {
             "name": "Windows",
