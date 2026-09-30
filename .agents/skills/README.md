@@ -22,7 +22,16 @@
 
 ## 当前内容
 
-`skills/` 目录目前为空。
+### `pipeline-guide/`
+
+MaaFramework Pipeline 编写指南，**原样取自** MaaEnd/MaaEnd 仓库 `v2` 分支的
+`.agents/skills/pipeline-guide/`，用于参考节点设计、识别算法、流程控制与审查清单。
+
+**注意**：该文档基于 MaaEnd 的 **Pipeline v2 格式**编写，而本项目使用 **v1 扁平格式**；
+文中 `Common/Button/`、`SceneManager`、`Custom 节点`、`tools/i18n` 等本节项目均不存在。
+`SKILL.md` 开头已列出完整的差异对照表，**使用前必读**。
+
+`field-reference.md` 是该 skill 的配套参考文档，原样保留。
 
 本项目日常使用 MaaFW 的通用技能 `create-maa-project`，它由 `skills` CLI 全局安装，
 **不属于**本仓库资产，因此不在此处重复。
