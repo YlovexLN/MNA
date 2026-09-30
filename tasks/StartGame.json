@@ -5,7 +5,7 @@
             "label": "进入游戏",
             "entry": "StartGame.Entry",
             "default_check": true,
-            "description": "显示文本「点击开始」进入游戏。游戏进程由 interface.json 的 pretask 在控制器连接前拉起。"
+            "description": "显示文本「点击开始」进入游戏。游戏需先由用户从 WeGame 启动，本任务只处理游戏内流程。"
         }
     ]
 }
