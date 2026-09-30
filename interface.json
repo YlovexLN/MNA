@@ -25,12 +25,6 @@
             ]
         }
     ],
-    "pretask": {
-        "name": "StartGame",
-        "label": "启动游戏",
-        "description": "运行任务前启动《胜利女神：新的希望》。路径为本机安装位置，换机器时需修改 exec。",
-        "exec": "D:\\WeGameApps\\rail_apps\\胜利女神：新的希望(2002017)\\nikke.exe"
-    },
     "import": [
         "./tasks/StartGame.json"
     ],
