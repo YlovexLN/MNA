@@ -55,8 +55,8 @@
     "project": {
         "displayName": "MNA",
         "initialTemplate": "agent",
-        "slug": "mna",
-        "version": "0.0.1"
+        "slug": "MNA",
+        "version": ""
     },
     "python": {
         "devCommand": [
