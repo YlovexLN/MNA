@@ -21,7 +21,10 @@ const releaseArtifactName = "MNA";
 
 const GUI_TYPES = {
     mfaa: {
-        suffix: "MFAA",
+        // Artifact names carry no GUI suffix: this project publishes a single GUI, so the
+        // suffix added nothing. Keep both suffixes empty while only MXU is enabled, and
+        // reinstate them (plus the -<GUI> segment in release.yml) if a second GUI is turned on.
+        suffix: "",
         runtimeDir: "mfaa",
         entrypointCandidates: (platform) =>
             platform.startsWith("win-")
@@ -39,7 +42,7 @@ const GUI_TYPES = {
         },
     },
     mxu: {
-        suffix: "MXU",
+        suffix: "",
         runtimeDir: "mxu",
         entrypointCandidates: (platform) =>
             platform.startsWith("win-")
@@ -134,7 +137,9 @@ function main() {
 
     for (const guiKey of enabledGuis) {
         const gui = GUI_TYPES[guiKey];
-        console.log(`\n--- Building ${gui.suffix} package ---`);
+        // Fall back to the GUI key so the message still identifies the GUI when it has no suffix.
+        const guiLabel = gui.suffix || guiKey;
+        console.log(`\n--- Building ${guiLabel} package ---`);
         const packagePaths = releasePackagePaths(interfaceJson, guiKey);
 
         const guiInterface = releaseGuiInterface(guiKey, interfaceJson, version, runtimePlatform);
@@ -142,7 +147,7 @@ function main() {
         if (!dryRun) {
             const guiPath = guiRuntimePath(gui.runtimeDir, runtimePlatform);
             if (!existsSync(guiPath)) {
-                console.warn(`[WARN] ${gui.suffix} runtime not found at ${guiPath}, skipping.`);
+                console.warn(`[WARN] ${guiLabel} runtime not found at ${guiPath}, skipping.`);
                 continue;
             }
             for (const path of packagePaths) {
@@ -197,22 +202,26 @@ function main() {
             arch,
             ext,
         ] of releaseTargets) {
-            artifacts.push(`${releaseArtifactName}-${os}-${arch}-${version}-${gui.suffix}.${ext}`);
+            artifacts.push(
+                `${releaseArtifactName}-${os}-${arch}-${version}${gui.suffix ? `-${gui.suffix}` : ""}.${ext}`,
+            );
         }
     }
 
-    // These names are a contract with the upload workflows (they match -win-/-linux-/-macos- and the
-    // GUI suffix), so the check stays independent of the rendered target matrix: a target that does
-    // not fit the convention has to fail here instead of publishing a name nothing else can match.
-    const suffixPattern = enabledGuis.map((g) => GUI_TYPES[g].suffix).join("|");
+    // These names are a contract with the upload workflows (they match -win-/-linux-/-macos-, and
+    // the GUI suffix when one is configured), so the check stays independent of the rendered
+    // target matrix: a target that does not fit the convention has to fail here instead of
+    // publishing a name nothing else can match.
+    const suffixes = enabledGuis.map((g) => GUI_TYPES[g].suffix).filter(Boolean);
+    const suffixSegment = suffixes.length > 0 ? `-(${suffixes.join("|")})` : "";
     for (const artifact of artifacts) {
         if (
             !new RegExp(
                 "^" +
                     escapeRegExp(releaseArtifactName) +
-                    "-(win|linux|macos)-(x86_64|aarch64)-v.+-(" +
-                    suffixPattern +
-                    ")\\.(zip|tar\\.gz)$",
+                    "-(win|linux|macos)-(x86_64|aarch64)-v.+" +
+                    suffixSegment +
+                    "\\.(zip|tar\\.gz)$",
             ).test(artifact)
         ) {
             throw new Error(`invalid artifact name: ${artifact}`);

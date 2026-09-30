@@ -119,10 +119,10 @@ jobs:
           fi
           for pkg_dir in "${package_dirs[@]}"; do
             gui=$(basename "$pkg_dir" | sed 's/^package-//')
-            # macOS runners resolve `shell: bash` to the system bash 3.2, which predates the
-            # parameter-expansion case modifiers, so uppercase through tr instead.
-            gui_upper="$(printf '%s' "$gui" | tr '[:lower:]' '[:upper:]')"
-            archive="MNA-${{ matrix.artifact_os }}-${{ matrix.arch }}-${GITHUB_REF_NAME}-${gui_upper}.${{ matrix.ext }}"
+            # No GUI suffix: this project enables a single GUI, so "-MXU" only made the archive
+            # names longer. Keep this in step with GUI_TYPES[].suffix in tools/build-release.mjs,
+            # which validates these names before the workflow ever sees them.
+            archive="MNA-${{ matrix.artifact_os }}-${{ matrix.arch }}-${GITHUB_REF_NAME}.${{ matrix.ext }}"
             (
               cd "$pkg_dir"
               if [[ "${{ matrix.ext }}" == "zip" ]]; then

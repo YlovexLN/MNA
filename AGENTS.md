@@ -52,18 +52,22 @@
 
 ## 四、本项目内不要做的事
 
-- **不要手改** `.github/workflows/release.yml` 来选择 UI。该文件是 CLI 生成的 managed 文件
+- `.github/workflows/release.yml` 是 CLI 生成的 managed 文件
   （`templates/addons/github/.github/workflows/release.yml` 渲染而来），手改会在下次
-  `--update` 时被覆盖。UI 选择由 `maa-project.json` 的 `runtime.mfa` / `runtime.mxu` 决定，
-  由 `tools/build-release.mjs` 在运行时读取。
-- **`tools/build-release.mjs` 与 `tools/sync-runtime.mjs` 同属 CLI 模板文件**
-  （`templates/addons/github/tools/`，`build-release.mjs` 第 17 行的 `{{projectSlug}}` 是
-  渲染占位符）。对它们的修改**会在 `--update github` 时被模板重新渲染覆盖**。目前有两处
-  本地改动属于这种情况，被覆盖后需重做：
+  `--update` 时被覆盖。**UI 的选择**由 `maa-project.json` 的 `runtime.mfa` / `runtime.mxu`
+  决定，由 `tools/build-release.mjs` 在运行时读取，不需要改这个文件。
+- **`tools/build-release.mjs`、`tools/sync-runtime.mjs` 与 `.github/workflows/release.yml`
+  同属 CLI 模板文件**（`templates/addons/github/`，`build-release.mjs` 第 17 行的
+  `{{projectSlug}}` 是渲染占位符）。对它们的修改**会在 `--update github` 时被模板重新渲染
+  覆盖**。目前有三处本地改动属于这种情况，被覆盖后需重做：
     1. `guiEntrypointName()` 用 `releaseArtifactName` 而非 `projectSlug` 作为 Windows exe 名
-       （`.exe` 产物名为 `MNA.exe`）。
-    2. `releaseTargets` 内层数组的缩进修正（原模板缩进少一级，会让 `format:check` 报 `[warn]`）。
-       上游若修好这两点，本地改动即可撤销。
+       （产物可执行文件名为 `MNA.exe`，Unix 仍为 `mna`）。
+    2. `releaseTargets` 内层数组的缩进修正（原模板缩进少一级，会让 `format:check` 报 `[warn]`，
+       进而短路 `pnpm check` 让 CI 全红）。
+    3. **产物名不带 GUI 后缀**：`GUI_TYPES[].suffix` 置空、artifact 正则改为在无后缀时省略
+       `-(...)` 段、`release.yml` 第 125 行的 archive 名去掉 `-${gui_upper}`。
+       这三处必须**同时**改，否则 `release.yml` 产出的名字会和 `build-release.mjs` 的校验对不上。
+       重新启用第二个 GUI 时要把后缀和 `-(...)` 段一起恢复。
 - **`maa-project.json` 的两条硬约束**（违反会让 `--doctor` 直接 `ok: false`，且构建失败）：
     - `project.slug` **必须是小写** ASCII 字母/数字/连字符。写 `MNA` 会报
       `project.slug must use lowercase ASCII letters, numbers, and hyphens`。
@@ -116,7 +120,7 @@
 不要只跑 `--version` 就宣称完成。按改动性质选择验证：
 
 - 改运行时/UI 配置 → `pnpm release:dry-run`（需 `CREATE_MAA_PROJECT_RUNTIME_PLATFORM=win-x64`），
-  确认产物名符合预期，例如 `MNA-win-x86_64-v0.1.0-MXU.zip`。
+  确认产物名符合预期，例如 `MNA-win-x86_64-v0.1.0.zip`（**不带 GUI 后缀**）。
 - 改项目配置 → `create-maa-project --doctor --report`，检查 `doctor.checks` 每项。
 - 改 pipeline / interface → `pnpm check`（`format:check` + `check:schema` + `check:maa`）。
   三步都应通过；`format:check` 若报 `[warn]`，跑 `pnpm format` 修掉，不要放着不管——
