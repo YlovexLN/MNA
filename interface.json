@@ -4,6 +4,9 @@
     "label": "MNA",
     "version": "v0.0.1",
     "description": "MNA 小助手",
+    "github": "https://github.com/YlovexLN/MNA",
+    "mirrorchyan_multiplatform": true,
+    "license": "MIT",
     "controller": [
         {
             "name": "Windows",
