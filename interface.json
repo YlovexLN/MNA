@@ -2,7 +2,7 @@
     "interface_version": 2,
     "name": "mna",
     "label": "MNA",
-    "version": "",
+    "version": "v0.0.1",
     "description": "MNA 小助手",
     "controller": [
         {
@@ -33,5 +33,15 @@
     },
     "import": [
         "./tasks/StartGame.json"
+    ],
+    "agent": [
+        {
+            "child_exec": "uv",
+            "child_args": [
+                "run",
+                "python",
+                "agent/main.py"
+            ]
+        }
     ]
 }
