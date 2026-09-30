@@ -19,6 +19,5 @@ resource/base/model/ocr/
 # and this directory resolve to the same environment; neither is committable.
 MNA/
 
-# .venv
-MNA
+# Local environment overrides; machine-specific and not needed by anyone else.
 .env
