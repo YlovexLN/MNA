@@ -50,7 +50,36 @@
 同一资产在 pipeline 中的节点名沿用 **PascalCase**（如 `StartGame.ClickStart`、
 `ClaimReward.Confirm`），这是 MaaFW 社区惯例，与文件名规则并存。
 
-## 四、本项目内不要做的事
+## 四、提交信息规范
+
+发布说明（Release Notes）由 `git-cliff` 按 `.github/cliff.toml` 的分组规则从**提交信息**
+生成，所以提交信息既是给协作者看的，也是**用户可见发布说明的唯一来源**。
+
+- **用中文写正文**。发布说明不做任何翻译，提交信息是什么语言，changelog 就是什么语言。
+  参照 MaaEnd：它的中文 changelog 来自中文提交，而非配置。
+- **必须带 Conventional Commits 前缀**，否则该提交会被 changelog **静默丢弃**
+  （`filter_unconventional = false` 且没有 catch-all parser）。
+
+    | 前缀               | changelog 分组 |
+    | ------------------ | -------------- |
+    | `feat`             | ✨ 新功能      |
+    | `fix`              | 🐛 Bug修复     |
+    | `refactor` / `rft` | 🚜 代码重构    |
+    | `perf`             | 🚀 性能优化    |
+    | `docs`             | 📚 文档        |
+    | `style` / `styles` | 🎨 样式        |
+    | `test`             | 🧪 测试        |
+    | `ci`               | ⚙️ 持续集成    |
+    | `chore(deps)`      | 📦 依赖更新    |
+    | `chore`            | 🔧 日常维护    |
+    | `revert`           | ◀️ 撤销        |
+    | `ai`               | 🤖 人工智能    |
+
+- 格式：`<前缀>(<范围>): <中文描述>`，范围用英文小写，例如
+  `feat(StartGame): 新增启动游戏与回归签到流程`。
+- 加 `[skip changelog]`（写在信息或正文里）可让该提交**不进**发布说明。
+
+## 五、本项目内不要做的事
 
 - `.github/workflows/release.yml` 是 CLI 生成的 managed 文件
   （`templates/addons/github/.github/workflows/release.yml` 渲染而来），手改会在下次
@@ -88,7 +117,7 @@
   `resource/base/model/ocr/`。它们都在 `.gitignore` 里，属派生物。
 - **不要改** `.gitignore` 里 `# BEGIN/END create-maa-project` 标记之间的内容，那由 CLI 管理。
 
-## 五、CLI 的使用纪律
+## 六、CLI 的使用纪律
 
 `create-maa-project` 是本项目的生成与维护工具（全局安装，3.6.0）。
 
@@ -107,7 +136,7 @@
 - `<path>` 是**路径**，`--slug` 才是项目标识。想生成到当前目录就用 `.`。
   （此前用 `create-maa-project MNA` 误建了子目录 `MNA\`，属错误用法。）
 
-## 六、本机环境约束（会让你困惑的部分）
+## 七、本机环境约束（会让你困惑的部分）
 
 - **沙箱会杀死 shell**：默认 `workspace-write` 模式下任何进程都无法创建，`pwsh` 连
   `echo test` 都返回 `0xC0000142`（DLL 初始化失败）。这不是命令写错，是沙箱边界。
@@ -123,7 +152,7 @@
   `CMP_UPDATE_FAILED`（Node `fetch` 失败）。但 PowerShell 拉同一 URL 返回 200，
   即**网络可达、问题在 Node fetch 链路**。不要把这类失败当成配置错误去改 `maa-project.json`。
 
-## 七、改动的验证要求
+## 八、改动的验证要求
 
 不要只跑 `--version` 就宣称完成。按改动性质选择验证：
 
