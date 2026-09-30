@@ -12,7 +12,7 @@
         "node": ">=22.13"
     },
     "license": "MIT",
-    "name": "MNA",
+    "name": "mna",
     "packageManager": "pnpm@11.5.1",
     "private": true,
     "scripts": {
