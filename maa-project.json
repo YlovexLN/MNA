@@ -66,6 +66,11 @@
     "runtime": {
         "mfa": {
             "channel": "stable",
+            "enabled": false,
+            "version": ""
+        },
+        "mxu": {
+            "channel": "stable",
             "enabled": true,
             "version": ""
         }
