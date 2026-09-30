@@ -1,6 +1,6 @@
 [changelog]
 header = """
-# 更新日志 | Release Notes
+# 更新日志
 """
 
 body = """
@@ -37,7 +37,7 @@ body = """
 {% endfor -%}
 {%- if github -%}
 {% if github.contributors | filter(attribute="is_first_time", value=true) | length != 0 %}
-  ## 新贡献者 | New Contributors
+  ## 新贡献者 ❤️
 {% endif %}\
 {% for contributor in github.contributors | filter(attribute="is_first_time", value=true) %}
   * @{{ contributor.username }} made their first contribution
@@ -54,17 +54,17 @@ protect_breaking_commits = false
 commit_parsers = [
     { message = ".*\\[skip changelog\\].*", skip = true },
     { body = ".*\\[skip changelog\\].*", skip = true },
-    { message = "^feat", group = "<!-- 0 -->新功能 | Features" },
-    { message = "^fix", group = "<!-- 1 -->问题修复 | Bug Fixes" },
-    { message = "^(refactor|rft)", group = "<!-- 2 -->代码重构 | Refactoring" },
-    { message = "^perf", group = "<!-- 3 -->性能优化 | Performance" },
-    { message = "^docs", group = "<!-- 4 -->文档 | Documentation" },
-    { message = "^(style|styles)", group = "<!-- 5 -->样式 | Style" },
-    { message = "^test", group = "<!-- 6 -->测试 | Tests" },
-    { message = "^ci", group = "<!-- 7 -->持续集成 | Continuous Integration" },
-    { message = "^chore\\(deps\\)", group = "<!-- 8 -->依赖更新 | Dependencies" },
-    { message = "^chore", group = "<!-- 9 -->日常维护 | Maintenance" },
-    { body = ".*security", group = "<!-- 10 -->安全 | Security" },
-    { message = "^[Rr]evert", group = "<!-- 11 -->撤销 | Reverts" },
+    { message = "^feat", group = "<!-- 0 -->✨ 新功能" },
+    { message = "^fix", group = "<!-- 1 -->🐛 Bug修复" },
+    { message = "^(refactor|rft)", group = "<!-- 2 -->🚜 代码重构" },
+    { message = "^perf", group = "<!-- 3 -->🚀 性能优化" },
+    { message = "^docs", group = "<!-- 4 -->📚 文档" },
+    { message = "^(style|styles)", group = "<!-- 5 -->🎨 样式" },
+    { message = "^test", group = "<!-- 6 -->🧪 测试" },
+    { message = "^ci", group = "<!-- 7 -->⚙️ 持续集成" },
+    { message = "^chore\\(deps\\)", group = "📦 依赖更新" },
+    { message = "^chore", group = "<!-- 8 -->🔧 日常维护" },
+    { message = "^revert", group = "<!-- 10 -->◀️ 撤销" },
+    { message = "^ai", group = "<!-- 9 -->🤖 人工智能" },
 ]
 sort_commits = "oldest"
