@@ -10,8 +10,6 @@
             ]
         }
     ],
-    // 阈值配置项：用户填写的整数覆盖 pipeline 中 OutpostDefense.ClickOnThreshold 的 threshold。
-    // 不填则沿用 default（50），也就是「超过 50% 才点击」。
     "option": {
         "OutpostDefenseThreshold": {
             "type": "input",

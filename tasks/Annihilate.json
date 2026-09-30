@@ -10,8 +10,6 @@
             ]
         }
     ],
-    // 是否启用：启用 → 有红点才点「一举歼灭」；不启用 → 不点它，改为在获取奖励区域点击「获取奖励」领取。
-    // （不要用 enabled: false 禁入口节点：入口被禁用会让 MaaFW 直接报任务失败。）
     "option": {
         "AnnihilateEnabled": {
             "type": "switch",
