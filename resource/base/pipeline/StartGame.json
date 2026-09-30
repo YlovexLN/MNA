@@ -101,13 +101,7 @@
     },
     "StartGame.ClickNoticeConfirm": {
         "recognition": "OCR",
-        "roi": [
-            647,
-            402,
-            157,
-            84
-        ],
-        "expected": "确认",
+        "expected": "取消",
         "action": "Click",
         "contact": 0,
         "post_delay": 1000
